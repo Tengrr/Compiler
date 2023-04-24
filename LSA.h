@@ -14,8 +14,8 @@ struct NFA_set
 };
 
 const string keyword[] = { "if", "else", "while", "do", "then" };
-const char operators[] = { '+', '-', '*', '/', '=' };					 //运算符
-const char delimiter[] = { '(', ')', '{', '}', ';', '<', '>', '$' };							//界符
+const char operators[] = { '+', '-', '*', '/', '=' };					 
+const char delimiter[] = { '(', ')', '{', '}', ';', '<', '>', '$' };							
 const int keywords_num = string_len(keyword);
 const int operators_num = string_len(operators);
 const int delimiters_num = string_len(delimiter);
@@ -23,7 +23,7 @@ const int delimiters_num = string_len(delimiter);
 
 
 
-TokenType identify(string); //将关键字转化为枚举类型
+TokenType identify(string); 
 void init_special_char();
 
 void init();
@@ -36,9 +36,9 @@ bool is_delimiter(char a);
 bool in_state(char a);
 bool in_final(char a);
 bool in_set(char a, NFA_set temp);
-bool is_final_state(NFA_set temp); //判断是否是终态
-int is_in(NFA_set temp); //和已有的newset有没有重复的，有就返回重复的编号
-void eps_closure(NFA_set& temp); //得到一个完整的子集
+bool is_final_state(NFA_set temp); 
+int is_in(NFA_set temp); 
+void eps_closure(NFA_set& temp); 
 
 void createNFA();
 void NFA_to_DFA();

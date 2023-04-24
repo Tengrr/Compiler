@@ -9,21 +9,16 @@
 #include "LSA.h"
 
 
-using namespace std;
-
-// const string keyword[] = {"break", "case", "char", "continue", "do", "default", "double",
-// 							  "else", "float", "for", "if", "int", "include", "long", "main", "return", "switch", "typedef", "void", "unsigned", "while", "iostream"};
-// const char operators[] = {'+', '-', '*', '/', '=', '!', '%', '~', '&', '|', '^'};					 //运算符
-// const char delimiter[] = {'(', ')', '{', '}', ';', '<', '>',  '$', '#',','};							//界符
+using namespace std;				
 
 TokenType op_index[256];
 TokenType de_index[256];
 
 string result[300][2] = {};
 FILE* src_file = NULL;
-ifstream lexical_rules;  //词法规则
+ifstream lexical_rules;  
 
-TokenType identify(string str) //将关键字转化为枚举类型
+TokenType identify(string str) // Convert key words into enum type
 {
 	for (int i = 0; i < keywords_num; ++i)
 		if (str == keyword[i])
@@ -39,7 +34,7 @@ void init_special_char()
 
 char state[300];
 int state_len;
-char start;  //起始字符
+char start;  
 char final[300];
 int final_len;
 bool is_final_array[450];
@@ -120,9 +115,9 @@ bool in_set(char a, NFA_set temp)
 void createNFA()
 {
 	int num;
-	bool flag = true; //用于得到首个符号
-	char ch, arrow;		  //读文法左部; 识别箭头
-	string str;      //读文法右部的
+	bool flag = true; 		
+	char ch, arrow;		  
+	string str;      
 	lexical_rules.open("lexical_rules.txt");
 	lexical_rules >> num;
 	while (num--)
@@ -140,7 +135,7 @@ void createNFA()
 		if (str.length() > 1)
 			nfa_tab[ch][str[0]].set[nfa_tab[ch][str[0]].pos++] = str[1];
 		else
-			nfa_tab[ch][str[0]].set[nfa_tab[ch][str[0]].pos++] = 'Y'; //终态
+			nfa_tab[ch][str[0]].set[nfa_tab[ch][str[0]].pos++] = 'Y'; 
 	}
 }
 
@@ -153,7 +148,7 @@ void showNFA()
 					cout << char(i) << " " << char(j) << " " << k << " " << nfa_tab[i][j].set[k] << endl;
 }
 
-int is_in(NFA_set temp) //和已有的newset有没有重复的，有就返回重复的编号
+int is_in(NFA_set temp) 
 {
 	bool flag[300];
 	bool flag1;
@@ -190,7 +185,7 @@ int is_in(NFA_set temp) //和已有的newset有没有重复的，有就返回重复的编号
 	return -1;
 }
 
-void eps_closure(NFA_set& temp) //得到一个完整的子集
+void eps_closure(NFA_set& temp) 
 {
 	for (int i = 0; i < temp.pos; ++i)
 		for (int j = 0; j < nfa_tab[temp.set[i]]['@'].pos; ++j)
@@ -198,7 +193,7 @@ void eps_closure(NFA_set& temp) //得到一个完整的子集
 				temp.set[temp.pos++] = nfa_tab[temp.set[i]]['@'].set[j];
 }
 
-bool is_final_state(NFA_set temp) //判断是否是终态
+bool is_final_state(NFA_set temp) 
 {
 	for (int i = 0; i < temp.pos; ++i)
 	{
@@ -233,7 +228,7 @@ void NFA_to_DFA()
 					if (nfa_tab[work_set.set[j]][final[i]].set[k] != '#' && nfa_tab[work_set.set[j]][final[i]].set[k] != 'Y' && !in_set(nfa_tab[work_set.set[j]][final[i]].set[k], worked_set))
 						worked_set.set[worked_set.pos++] = nfa_tab[work_set.set[j]][final[i]].set[k];
 					if (nfa_tab[work_set.set[j]][final[i]].set[k] == 'Y' && !in_set(nfa_tab[work_set.set[j]][final[i]].set[k], worked_set))
-						worked_set.set[worked_set.pos++] = 'Y'; //用Y表示终态
+						worked_set.set[worked_set.pos++] = 'Y'; 
 				}
 			}
 			eps_closure(worked_set);
@@ -272,12 +267,12 @@ void scan()
 	int position = 0;
 	char ch;
 	int i, j;
-	bool flag = 0; // 用于辨别浮点数或整数
+	bool flag = 0; 
 	ch = fgetc(src_file);
 	while (1)
 	{
 		word_str = "";
-		if (is_int(ch)) //多一个ch
+		if (is_int(ch)) 
 		{
 			word_str += ch;
 			ch = fgetc(src_file);
@@ -293,40 +288,33 @@ void scan()
 					if (flag) {
 						result[position][0] = "REAL16";
 						result[position++][1] = word_str.substr(2);
-						// cout << "REAL16\t" << word_str << endl;
 					}
 					else {
 						result[position][0] = "INT16";
 						result[position++][1] = word_str.substr(2);
-						// cout << "INT16\t" << word_str << endl;
 					}
 				else if (word_str[0] == '0' && word_str.length() > 1)
 					if (flag) {
 						result[position][0] = "REAL8";
 						result[position++][1] = word_str.substr(1);
-						// cout << "REAL8\t" << word_str << endl;
 					}
 					else {
 						result[position][0] = "INT8";
 						result[position++][1] = word_str.substr(1);
-						// cout << "INT8\t" << word_str << endl;
 					}
 				else
 					if (flag) {
 						result[position][0] = "REAL10";
 						result[position++][1] = word_str;
-						// cout << "REAL10\t" << word_str << endl;
 					}
 					else {
 						result[position][0] = "INT10";
 						result[position++][1] = word_str;
-						// cout << "INT10\t" << word_str << endl;
 					}
 			}
 			else {
 				result[position][0] = "ERROR, CONST";
 				result[position++][1] = word_str;
-				// cout << "出错，不是常量\t" << word_str << endl;
 			}
 			flag = 0;
 			continue;
@@ -421,9 +409,7 @@ void show()
 
 void show_result() {
 	int iter = 0;
-	//cout << result[iter][0] << "->->->" << result[iter][1] << endl;
-	//iter += 1;
-	//cout << result[iter][0] << "->->->" << result[iter][1] << endl;
+	
 	while (true) {
 		cout << result[iter++][0] << "\t" << result[iter][1] << endl;
 		// iter++;
