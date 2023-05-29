@@ -21,8 +21,8 @@ void Parse_S();
 void Parse_L();
 void Parse_P();
 void Parse_ALL();
-string Fresh_t();			//产生一个新的临时变量
-string Fresh_L();			//产生一个新跳转
+string Fresh_t();
+string Fresh_L();
 void up(string str);
 
 class Token {
@@ -37,7 +37,7 @@ public:
 };
 
 
-//全局变量
+//鍏ㄥ眬鍙橀噺
 
 vector<Token> tokens;
 
@@ -53,7 +53,7 @@ extern TokenType op_index[256];
 extern TokenType de_index[256];
 extern string result[300][2];
 
-//全局变量
+//鍏ㄥ眬鍙橀噺
 
 int main() {
 
@@ -78,7 +78,7 @@ int main() {
 	}
 
 
-	//在输入的末尾自动添加$
+	//鍦ㄨ緭鍏ョ殑鏈熬鑷姩娣诲姞$
 	tokens.push_back(Token(DOLLAR, "_"));
 
 
@@ -340,7 +340,7 @@ void Parse_S() {
 
 void Parse_L() {
 
-	Parse_S();			//将当前S所在的分支传递给Parse_S函数
+	Parse_S();			//灏嗗綋鍓峉鎵�鍦ㄧ殑鍒嗘敮浼犻�掔粰Parse_S鍑芥暟
 	Token currentToken = tokens.at(++index);
 	if (currentToken.type == SEMICOLON) {
 		return;
